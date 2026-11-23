@@ -25,6 +25,9 @@
     --bento-purple: #c4b5fd;
     --bento-cyan: #7dd3fc;
     --bento-slate: #8b95a5;
+    --green-cleared: #22c55e;
+    --green-cleared-bg: rgba(34, 197, 94, 0.14);
+    --green-cleared-border: rgba(34, 197, 94, 0.45);
     --danger: #f87171;
     --danger-bg: rgba(248, 113, 113, 0.16);
     --radius: 16px;
@@ -40,9 +43,12 @@
   html, body {
     margin: 0;
     padding: 0;
-    height: 100dvh;
+    min-height: 100dvh;
     width: 100%;
-    overflow: hidden;
+    max-width: 100vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     font-family: var(--font);
     background: var(--bg);
     color: var(--text);
@@ -53,10 +59,11 @@
   .app-shell {
     display: flex;
     flex-direction: column;
-    height: 100dvh;
+    min-height: 100dvh;
     width: 100%;
+    max-width: 100%;
     padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 
   /* Top App Bar */
@@ -134,6 +141,7 @@
     border-bottom: 1px solid var(--border);
     padding: 6px 10px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 6px;
@@ -219,8 +227,14 @@
   }
 
   .view-tabs {
-    display: none;
+    display: flex;
     gap: 6px;
+    width: 100%;
+  }
+
+  .view-tabs .vtab-btn {
+    flex: 1;
+    padding: 0 8px;
   }
 
   .vtab-btn {
@@ -281,18 +295,15 @@
   /* Main Area */
   .main-area {
     flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .view-pane {
     display: none;
     flex-direction: column;
-    height: 100%;
-    min-height: 0;
-    padding: 4px 10px 10px;
+    padding: 4px 10px 12px;
     gap: 8px;
   }
 
@@ -405,9 +416,6 @@
 
   /* Party List */
   .list-scroll {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -554,6 +562,56 @@
     color: var(--bento-lime);
   }
 
+  /* Alternating Date Group Colors in Khata */
+  .khata-date-group {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .khata-date-group.alt-0 {
+    background: rgba(125, 211, 252, 0.08);
+    border-color: rgba(125, 211, 252, 0.25);
+  }
+
+  .khata-date-group.alt-1 {
+    background: rgba(196, 181, 253, 0.08);
+    border-color: rgba(196, 181, 253, 0.25);
+  }
+
+  .khata-date-group.alt-2 {
+    background: rgba(251, 146, 60, 0.08);
+    border-color: rgba(251, 146, 60, 0.25);
+  }
+
+  .khata-date-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 7px 10px;
+    background: rgba(17, 24, 39, 0.45);
+    border-top: 1px solid var(--border);
+  }
+
+  .khata-date-total {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--bento-yellow);
+  }
+
+  .clear-hisab-btn {
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    background: var(--green-cleared);
+    color: #052e16;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
   .khata-row-checked td {
     text-decoration: line-through;
     color: var(--text-muted);
@@ -572,6 +630,35 @@
     vertical-align: middle;
   }
 
+  /* Daybook Cleared Read-Only Green Rows */
+  .daybook-row-cleared td {
+    background: var(--green-cleared-bg);
+    color: #86efac;
+  }
+
+  .cleared-badge {
+    display: inline-block;
+    background: var(--green-cleared);
+    color: #052e16;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+
+  .unlock-pin-btn {
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid var(--green-cleared-border);
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
   .rm-btn {
     height: 26px;
     padding: 0 8px;
@@ -584,14 +671,9 @@
     cursor: pointer;
   }
 
-  /* Bottom Navigation (Android) */
+  /* Bottom Navigation hidden per user request */
   .bottom-nav {
-    background: var(--nav-bg);
-    border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    flex-shrink: 0;
-    height: 54px;
+    display: none !important;
   }
 
   .bnav-btn {
@@ -618,8 +700,8 @@
     content: "";
     position: absolute;
     top: 0;
-    left: 25%;
-    right: 25%;
+    left: 20%;
+    right: 20%;
     height: 3px;
     background: var(--bento-purple);
     border-radius: 0 0 3px 3px;
@@ -641,11 +723,16 @@
   }
 
   @media (min-width: 768px) {
-    .bottom-nav { display: none; }
-    .view-tabs { display: flex; }
+    .view-tabs {
+      width: auto;
+    }
+    .view-tabs .vtab-btn {
+      flex: 0 0 auto;
+      padding: 0 14px;
+    }
   }
 
-  /* Custom Smart Payment Keypad Sheet (Dark Slate + Bento Pastel Scheme) */
+  /* Custom Smart Payment Keypad Sheet */
   .keypad-sheet {
     position: fixed;
     left: 0;
@@ -876,7 +963,7 @@
     </div>
     <div class="topbar-actions">
       <button type="button" class="icon-btn" id="shareDayBtn" title="Copy Summary">Share</button>
-      <button type="button" class="icon-btn" id="backupBtn" title="Backup & Export">Backup</button>
+      <button type="button" class="icon-btn" id="backupBtn" title="Backup, Export & PIN">Backup</button>
       <button type="button" class="icon-btn" id="fullscreenBtn" title="Toggle Full Screen">Full</button>
     </div>
   </header>
@@ -896,6 +983,7 @@
     <div class="view-tabs">
       <button type="button" class="vtab-btn active" data-view="daybook">Daybook</button>
       <button type="button" class="vtab-btn" data-view="khata">Khata Book</button>
+      <button type="button" class="vtab-btn" data-view="cleared">Cleared</button>
     </div>
   </div>
 
@@ -928,6 +1016,14 @@
       </div>
       <div class="list-scroll" id="khataList"></div>
     </section>
+
+    <!-- CLEARED VIEW -->
+    <section class="view-pane" id="clearedView">
+      <div class="form-row" style="flex-shrink:0;">
+        <input type="search" class="field" id="clearedSearchInput" placeholder="Search cleared hisab (e.g. Saleem 01)...">
+      </div>
+      <div class="list-scroll" id="clearedList"></div>
+    </section>
   </main>
 
   <!-- Android Bottom Navigation -->
@@ -940,10 +1036,14 @@
       <span class="bnav-ico">📒</span>
       <span>Khata</span>
     </button>
+    <button type="button" class="bnav-btn" data-view="cleared">
+      <span class="bnav-ico">✓</span>
+      <span>Cleared</span>
+    </button>
   </nav>
 </div>
 
-<!-- Custom Payment Keypad with + (New Box) and Enter (Save) -->
+<!-- Custom Payment Keypad with + Box and Enter -->
 <section class="keypad-sheet" id="keypadSheet" aria-label="Payment Keypad">
   <div class="keypad-head">
     <div class="keypad-party-label" id="kpPartyLabel">Party</div>
@@ -976,12 +1076,18 @@
 
 <datalist id="partyDatalist"></datalist>
 
-<!-- Backup / Export Modal -->
+<!-- Backup, Export & PIN Modal -->
 <div class="modal-backdrop" id="backupModal">
   <div class="modal-box">
-    <h3 class="modal-title">Backup &amp; Export Data</h3>
+    <h3 class="modal-title">Backup, Export &amp; PIN</h3>
     <div class="modal-body">
-      <div>Export all Daybook &amp; Khata records as JSON (for restore) or CSV (for Excel/Sheets).</div>
+      <div><strong>Security PIN</strong> (default: <code>1234</code>) — Required to edit/unlock Cleared entries.</div>
+      <div class="form-row">
+        <input type="password" inputmode="numeric" maxlength="8" class="field" id="newPinInput" placeholder="Enter new 4-digit PIN">
+        <button type="button" class="btn btn-primary" id="savePinBtn">Set PIN</button>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);width:100%;margin:4px 0;">
+      <div>Export all Daybook, Khata &amp; Cleared records:</div>
       <div class="modal-actions" style="justify-content:flex-start;">
         <button type="button" class="btn btn-dark" id="exportJsonBtn">Download JSON</button>
         <button type="button" class="btn btn-green" id="exportCsvBtn">Download CSV</button>
@@ -996,6 +1102,21 @@
   </div>
 </div>
 
+<!-- PIN Unlock Modal -->
+<div class="modal-backdrop" id="pinModal">
+  <div class="modal-box">
+    <h3 class="modal-title" id="pinModalTitle">Enter PIN to Unlock</h3>
+    <div class="modal-body">
+      <div id="pinModalMsg">Cleared entries are read-only. Enter PIN to unlock or remove.</div>
+      <input type="password" inputmode="numeric" maxlength="8" class="field" id="pinCheckInput" placeholder="Enter PIN (default 1234)">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="pinCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-green" id="pinUnlockBtn">Unlock</button>
+    </div>
+  </div>
+</div>
+
 <!-- Confirm Modal -->
 <div class="modal-backdrop" id="confirmModal">
   <div class="modal-box">
@@ -1003,7 +1124,7 @@
     <div class="modal-body" id="confirmMessage">Are you sure?</div>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="confirmCancelBtn">Cancel</button>
-      <button type="button" class="btn btn-danger" id="confirmOkBtn">Remove</button>
+      <button type="button" class="btn btn-danger" id="confirmOkBtn">Confirm</button>
     </div>
   </div>
 </div>
@@ -1067,13 +1188,15 @@
 
   var state = {
     currentDate: localTodayStr(),
-    activeView: "daybook",
+    activeView: "daybook", // daybook | khata | cleared
     expandedDaybook: {},
     expandedKhata: {},
+    expandedCleared: {},
     days: {},
-    // Keypad state
+    clearedBatches: [], // [{ id, label, party, date, total }]
+    pin: "1234",
     kpOpen: false,
-    kpTargetParty: null, // null = top form partyInput, string = existing party name
+    kpTargetParty: null,
     kpBoxes: [""],
     kpActiveIdx: 0
   };
@@ -1083,8 +1206,10 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object" && parsed.days) {
-          state.days = parsed.days;
+        if (parsed && typeof parsed === "object") {
+          if (parsed.days) state.days = parsed.days;
+          if (Array.isArray(parsed.clearedBatches)) state.clearedBatches = parsed.clearedBatches;
+          if (parsed.pin) state.pin = String(parsed.pin);
           return;
         }
       }
@@ -1116,7 +1241,11 @@
 
   function saveState() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        days: state.days,
+        clearedBatches: state.clearedBatches,
+        pin: state.pin
+      }));
     } catch (e) {}
   }
 
@@ -1134,10 +1263,13 @@
   var summaryTotal = document.getElementById("summaryTotal");
   var daybookList = document.getElementById("daybookList");
   var khataList = document.getElementById("khataList");
+  var clearedList = document.getElementById("clearedList");
   var daybookView = document.getElementById("daybookView");
   var khataView = document.getElementById("khataView");
+  var clearedView = document.getElementById("clearedView");
   var partyDatalist = document.getElementById("partyDatalist");
   var khataSearchInput = document.getElementById("khataSearchInput");
+  var clearedSearchInput = document.getElementById("clearedSearchInput");
   var partyInput = document.getElementById("partyInput");
   var noteInput = document.getElementById("noteInput");
   var topPayBoxes = document.getElementById("topPayBoxes");
@@ -1158,6 +1290,7 @@
     }, 2200);
   }
 
+  // Confirm Modal
   var confirmModal = document.getElementById("confirmModal");
   var confirmTitle = document.getElementById("confirmTitle");
   var confirmMessage = document.getElementById("confirmMessage");
@@ -1183,6 +1316,44 @@
     confirmCallback = null;
   });
 
+  // PIN Unlock Modal
+  var pinModal = document.getElementById("pinModal");
+  var pinCheckInput = document.getElementById("pinCheckInput");
+  var pinSuccessCallback = null;
+
+  function requirePin(onSuccess) {
+    pinSuccessCallback = onSuccess;
+    pinCheckInput.value = "";
+    pinModal.classList.add("open");
+    setTimeout(function () { pinCheckInput.focus(); }, 50);
+  }
+
+  document.getElementById("pinCancelBtn").addEventListener("click", function () {
+    pinModal.classList.remove("open");
+    pinSuccessCallback = null;
+  });
+
+  document.getElementById("pinUnlockBtn").addEventListener("click", function () {
+    if (pinCheckInput.value.trim() === state.pin) {
+      pinModal.classList.remove("open");
+      if (typeof pinSuccessCallback === "function") {
+        pinSuccessCallback();
+      }
+      pinSuccessCallback = null;
+    } else {
+      showToast("Wrong PIN!");
+      pinCheckInput.value = "";
+      pinCheckInput.focus();
+    }
+  });
+
+  pinCheckInput.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      document.getElementById("pinUnlockBtn").click();
+    }
+  });
+
   function updatePartyDatalist() {
     var names = {};
     Object.keys(state.days).forEach(function (dt) {
@@ -1200,7 +1371,6 @@
     });
   }
 
-  // Keypad Logic
   function getKpSum() {
     var sum = 0;
     state.kpBoxes.forEach(function (val) {
@@ -1353,10 +1523,11 @@
 
   document.getElementById("kpCloseBtn").addEventListener("click", closeKeypad);
 
-  // Physical keyboard support when keypad is open
   document.addEventListener("keydown", function (ev) {
     if (!state.kpOpen) return;
-    if (document.activeElement === partyInput || document.activeElement === noteInput || document.activeElement === khataSearchInput) {
+    if (document.activeElement === partyInput || document.activeElement === noteInput ||
+        document.activeElement === khataSearchInput || document.activeElement === clearedSearchInput ||
+        document.activeElement === pinCheckInput) {
       return;
     }
     if (ev.key >= "0" && ev.key <= "9") {
@@ -1380,6 +1551,41 @@
     }
   });
 
+  function clearDateForParty(partyName, dateStr) {
+    var entries = state.days[dateStr] || [];
+    var targetEntries = entries.filter(function (e) {
+      return (e.party || "").trim() === partyName && !e.cleared;
+    });
+    if (!targetEntries.length) return;
+
+    var existingCount = state.clearedBatches.filter(function (b) {
+      return b.party === partyName;
+    }).length;
+    var batchNum = String(existingCount + 1).padStart(2, "0");
+    var batchLabel = partyName + " " + batchNum;
+    var batchId = uid();
+    var total = 0;
+
+    targetEntries.forEach(function (e) {
+      total += Number(e.amount) || 0;
+      e.cleared = true;
+      e.clearedBatchId = batchId;
+      e.clearedLabel = batchLabel;
+    });
+
+    state.clearedBatches.push({
+      id: batchId,
+      label: batchLabel,
+      party: partyName,
+      date: dateStr,
+      total: total
+    });
+
+    saveState();
+    renderAll();
+    showToast("Saved to Cleared as " + batchLabel);
+  }
+
   function renderDaybook() {
     var entries = ensureDay(state.currentDate);
     var dayTotal = 0;
@@ -1392,11 +1598,13 @@
       var amt = Number(item.amount) || 0;
       dayTotal += amt;
       if (!partyGroups[name]) {
-        partyGroups[name] = { total: 0, items: [] };
+        partyGroups[name] = { total: 0, items: [], hasCleared: false, allCleared: true };
         order.push(name);
       }
       partyGroups[name].total += amt;
       partyGroups[name].items.push(item);
+      if (item.cleared) partyGroups[name].hasCleared = true;
+      else partyGroups[name].allCleared = false;
     });
 
     if (state.activeView === "daybook") {
@@ -1421,20 +1629,31 @@
 
       var card = document.createElement("div");
       card.className = "party-card" + (isExpanded ? " expanded" : "");
+      if (group.allCleared) {
+        card.style.borderColor = "var(--green-cleared-border)";
+      }
 
       var row = document.createElement("div");
       row.className = "party-summary-row";
+      if (group.allCleared) {
+        row.style.background = "var(--green-cleared-bg)";
+      }
 
       var info = document.createElement("div");
       info.className = "party-info";
       var nameEl = document.createElement("div");
       nameEl.className = "party-name";
       nameEl.textContent = name;
+      if (group.allCleared) nameEl.style.color = "#86efac";
+
       var subEl = document.createElement("div");
       subEl.className = "party-sub";
-      subEl.textContent = group.items.length + " entr" + (group.items.length === 1 ? "y" : "ies") + " · + to add or tap total";
+      subEl.textContent = group.items.length + " entr" + (group.items.length === 1 ? "y" : "ies") +
+        (group.allCleared ? " · Cleared (Read-Only)" : " · + to add or tap total");
       info.appendChild(nameEl);
       info.appendChild(subEl);
+      info.style.cursor = "pointer";
+      info.addEventListener("click", function () { payBtn.click(); });
 
       var actions = document.createElement("div");
       actions.className = "party-right-actions";
@@ -1451,6 +1670,9 @@
       var payBtn = document.createElement("button");
       payBtn.type = "button";
       payBtn.className = "pay-total-btn";
+      if (group.allCleared) {
+        payBtn.style.background = "var(--green-cleared)";
+      }
       payBtn.innerHTML = '<span>' + formatINR(group.total) + '</span><span class="pay-caret">' + (isExpanded ? "▲" : "▼") + '</span>';
       payBtn.title = "Click to view individual payment entries";
       payBtn.addEventListener("click", function () {
@@ -1474,6 +1696,7 @@
       var tbody = document.createElement("tbody");
       group.items.forEach(function (entry, idx) {
         var tr = document.createElement("tr");
+        if (entry.cleared) tr.className = "daybook-row-cleared";
 
         var tdIdx = document.createElement("td");
         tdIdx.textContent = idx + 1;
@@ -1481,23 +1704,47 @@
         var tdAmt = document.createElement("td");
         tdAmt.className = "entry-amt";
         tdAmt.textContent = formatINR(entry.amount);
+        if (entry.cleared) tdAmt.style.color = "#86efac";
 
         var tdNote = document.createElement("td");
-        tdNote.textContent = entry.note || "—";
+        if (entry.cleared) {
+          tdNote.innerHTML = '<span class="cleared-badge">' + (entry.clearedLabel || "CLEARED") + '</span> ' + (entry.note || "");
+        } else {
+          tdNote.textContent = entry.note || "—";
+        }
 
         var tdAct = document.createElement("td");
         tdAct.style.textAlign = "right";
-        var rmBtn = document.createElement("button");
-        rmBtn.type = "button";
-        rmBtn.className = "rm-btn";
-        rmBtn.textContent = "Remove";
-        rmBtn.addEventListener("click", function () {
-          state.days[state.currentDate] = entries.filter(function (x) { return x.id !== entry.id; });
-          saveState();
-          renderAll();
-          showToast("Entry removed");
-        });
-        tdAct.appendChild(rmBtn);
+        if (entry.cleared) {
+          var lockBtn = document.createElement("button");
+          lockBtn.type = "button";
+          lockBtn.className = "unlock-pin-btn";
+          lockBtn.textContent = "PIN Unlock";
+          lockBtn.title = "Cleared entry is read-only. Enter PIN to unlock/remove.";
+          lockBtn.addEventListener("click", function () {
+            requirePin(function () {
+              openConfirm("Unlocked Entry", "Remove or restore " + formatINR(entry.amount) + " (" + (entry.clearedLabel || "Cleared") + ")?", function () {
+                state.days[state.currentDate] = entries.filter(function (x) { return x.id !== entry.id; });
+                saveState();
+                renderAll();
+                showToast("Cleared entry removed");
+              });
+            });
+          });
+          tdAct.appendChild(lockBtn);
+        } else {
+          var rmBtn = document.createElement("button");
+          rmBtn.type = "button";
+          rmBtn.className = "rm-btn";
+          rmBtn.textContent = "Remove";
+          rmBtn.addEventListener("click", function () {
+            state.days[state.currentDate] = entries.filter(function (x) { return x.id !== entry.id; });
+            saveState();
+            renderAll();
+            showToast("Entry removed");
+          });
+          tdAct.appendChild(rmBtn);
+        }
 
         tr.appendChild(tdIdx);
         tr.appendChild(tdAmt);
@@ -1519,14 +1766,21 @@
     var partyMap = {};
     var khataGrandTotal = 0;
 
-    Object.keys(state.days).sort().reverse().forEach(function (dt) {
+    // Date-wise older first, excluding cleared entries
+    Object.keys(state.days).sort().forEach(function (dt) {
       (state.days[dt] || []).forEach(function (item) {
+        if (item.cleared) return;
         var name = (item.party || "").trim();
         if (!name) return;
         var amt = Number(item.amount) || 0;
-        if (!partyMap[name]) partyMap[name] = { total: 0, entries: [] };
+        if (!partyMap[name]) partyMap[name] = { total: 0, byDate: {}, dateOrder: [] };
         partyMap[name].total += amt;
-        partyMap[name].entries.push({
+        if (!partyMap[name].byDate[dt]) {
+          partyMap[name].byDate[dt] = { total: 0, items: [] };
+          partyMap[name].dateOrder.push(dt);
+        }
+        partyMap[name].byDate[dt].total += amt;
+        partyMap[name].byDate[dt].items.push({
           date: dt,
           id: item.id,
           amount: amt,
@@ -1554,7 +1808,7 @@
     if (!partyNames.length) {
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "No Khata records found.";
+      empty.textContent = "No active Khata records found.";
       khataList.appendChild(empty);
       return;
     }
@@ -1562,6 +1816,8 @@
     partyNames.forEach(function (name) {
       var info = partyMap[name];
       var isExpanded = !!state.expandedKhata[name];
+      var totalCount = 0;
+      info.dateOrder.forEach(function (dt) { totalCount += info.byDate[dt].items.length; });
 
       var card = document.createElement("div");
       card.className = "party-card" + (isExpanded ? " expanded" : "");
@@ -1576,9 +1832,11 @@
       pName.textContent = name;
       var pSub = document.createElement("div");
       pSub.className = "party-sub";
-      pSub.textContent = info.entries.length + " payment" + (info.entries.length === 1 ? "" : "s") + " · + to add or tap total";
+      pSub.textContent = totalCount + " payment" + (totalCount === 1 ? "" : "s") + " · + to add or tap total";
       pInfo.appendChild(pName);
       pInfo.appendChild(pSub);
+      pInfo.style.cursor = "pointer";
+      pInfo.addEventListener("click", function () { payBtn.click(); });
 
       var actions = document.createElement("div");
       actions.className = "party-right-actions";
@@ -1596,7 +1854,7 @@
       payBtn.type = "button";
       payBtn.className = "pay-total-btn";
       payBtn.innerHTML = '<span>' + formatINR(info.total) + '</span><span class="pay-caret">' + (isExpanded ? "▲" : "▼") + '</span>';
-      payBtn.title = "Click to view all payment entries";
+      payBtn.title = "Click to view date-wise payments";
       payBtn.addEventListener("click", function () {
         state.expandedKhata[name] = !state.expandedKhata[name];
         renderKhata();
@@ -1611,79 +1869,224 @@
       var drawer = document.createElement("div");
       drawer.className = "entries-drawer";
 
-      var sortedEntries = info.entries.slice().sort(function (a, b) {
-        return (a.checked ? 1 : 0) - (b.checked ? 1 : 0);
-      });
+      // Render each date group (older first) with alternating colors + right-aligned date total + Clear Hisab button
+      info.dateOrder.forEach(function (dt, dIdx) {
+        var dGroup = info.byDate[dt];
+        var groupBox = document.createElement("div");
+        groupBox.className = "khata-date-group alt-" + (dIdx % 3);
 
-      var table = document.createElement("table");
-      table.className = "entries-table";
-      table.innerHTML = '<thead><tr><th style="width:28px;text-align:center;">✓</th><th>Date</th><th>Amount</th><th>Note</th><th style="text-align:right;">Action</th></tr></thead>';
-
-      var tbody = document.createElement("tbody");
-      sortedEntries.forEach(function (e) {
-        var tr = document.createElement("tr");
-        if (e.checked) tr.className = "khata-row-checked";
-
-        var tdChk = document.createElement("td");
-        tdChk.style.textAlign = "center";
-        var chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.className = "khata-chk";
-        chk.checked = !!e.checked;
-        chk.title = "Check payment";
-        chk.addEventListener("change", function () {
-          e.ref.checked = chk.checked;
-          saveState();
-          renderKhata();
+        var sortedItems = dGroup.items.slice().sort(function (a, b) {
+          return (a.checked ? 1 : 0) - (b.checked ? 1 : 0);
         });
-        tdChk.appendChild(chk);
 
-        var tdDate = document.createElement("td");
-        tdDate.textContent = formatDisplayDate(e.date);
+        var table = document.createElement("table");
+        table.className = "entries-table";
+        table.style.background = "transparent";
+        table.style.border = "none";
+        table.innerHTML = '<thead><tr><th style="width:28px;text-align:center;">✓</th><th>Date</th><th>Amount</th><th>Note</th><th style="text-align:right;">Action</th></tr></thead>';
 
-        var tdAmt = document.createElement("td");
-        tdAmt.className = "entry-amt";
-        tdAmt.textContent = formatINR(e.amount);
+        var tbody = document.createElement("tbody");
+        sortedItems.forEach(function (e) {
+          var tr = document.createElement("tr");
+          if (e.checked) tr.className = "khata-row-checked";
 
-        var tdNote = document.createElement("td");
-        tdNote.textContent = e.note || "—";
-
-        var tdAct = document.createElement("td");
-        tdAct.style.textAlign = "right";
-        var rmBtn = document.createElement("button");
-        rmBtn.type = "button";
-        rmBtn.className = "rm-btn";
-        rmBtn.textContent = "Remove";
-        rmBtn.addEventListener("click", function () {
-          openConfirm("Remove Payment", "Remove " + formatINR(e.amount) + " for " + name + " (" + e.date + ")?", function () {
-            state.days[e.date] = (state.days[e.date] || []).filter(function (x) { return x.id !== e.id; });
+          var tdChk = document.createElement("td");
+          tdChk.style.textAlign = "center";
+          var chk = document.createElement("input");
+          chk.type = "checkbox";
+          chk.className = "khata-chk";
+          chk.checked = !!e.checked;
+          chk.addEventListener("change", function () {
+            e.ref.checked = chk.checked;
             saveState();
-            renderAll();
-            showToast("Hisab cleared & removed");
+            renderKhata();
+          });
+          tdChk.appendChild(chk);
+
+          var tdDate = document.createElement("td");
+          tdDate.textContent = formatDisplayDate(e.date);
+
+          var tdAmt = document.createElement("td");
+          tdAmt.className = "entry-amt";
+          tdAmt.textContent = formatINR(e.amount);
+
+          var tdNote = document.createElement("td");
+          tdNote.textContent = e.note || "—";
+
+          var tdAct = document.createElement("td");
+          tdAct.style.textAlign = "right";
+          var rmBtn = document.createElement("button");
+          rmBtn.type = "button";
+          rmBtn.className = "rm-btn";
+          rmBtn.textContent = "Remove";
+          rmBtn.addEventListener("click", function () {
+            openConfirm("Remove Payment", "Remove " + formatINR(e.amount) + " for " + name + " (" + formatDisplayDate(e.date) + ")?", function () {
+              state.days[e.date] = (state.days[e.date] || []).filter(function (x) { return x.id !== e.id; });
+              saveState();
+              renderAll();
+              showToast("Entry removed");
+            });
+          });
+          tdAct.appendChild(rmBtn);
+
+          tr.appendChild(tdChk);
+          tr.appendChild(tdDate);
+          tr.appendChild(tdAmt);
+          tr.appendChild(tdNote);
+          tr.appendChild(tdAct);
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        groupBox.appendChild(table);
+
+        var footer = document.createElement("div");
+        footer.className = "khata-date-footer";
+
+        var dtTot = document.createElement("span");
+        dtTot.className = "khata-date-total";
+        dtTot.textContent = formatDisplayDate(dt) + " Total: " + formatINR(dGroup.total);
+
+        var clearBtn = document.createElement("button");
+        clearBtn.type = "button";
+        clearBtn.className = "clear-hisab-btn";
+        clearBtn.textContent = "Clear Hisab";
+        clearBtn.addEventListener("click", function () {
+          openConfirm("Clear Hisab", "Mark all payments for " + name + " on " + formatDisplayDate(dt) + " (" + formatINR(dGroup.total) + ") as Cleared?", function () {
+            clearDateForParty(name, dt);
           });
         });
-        tdAct.appendChild(rmBtn);
 
-        tr.appendChild(tdChk);
-        tr.appendChild(tdDate);
-        tr.appendChild(tdAmt);
-        tr.appendChild(tdNote);
-        tr.appendChild(tdAct);
-        tbody.appendChild(tr);
+        footer.appendChild(dtTot);
+        footer.appendChild(clearBtn);
+        groupBox.appendChild(footer);
+        drawer.appendChild(groupBox);
       });
 
-      table.appendChild(tbody);
-      drawer.appendChild(table);
       card.appendChild(row);
       card.appendChild(drawer);
       khataList.appendChild(card);
     });
   }
 
+  function renderCleared() {
+    var query = clearedSearchInput.value.trim().toLowerCase();
+    var batches = state.clearedBatches.filter(function (b) {
+      return !query || (b.label || "").toLowerCase().indexOf(query) !== -1 || (b.party || "").toLowerCase().indexOf(query) !== -1;
+    });
+
+    var clearedGrand = 0;
+    batches.forEach(function (b) { clearedGrand += Number(b.total) || 0; });
+
+    if (state.activeView === "cleared") {
+      summaryLabel.textContent = "Total Cleared Hisab";
+      summaryTotal.textContent = formatINR(clearedGrand);
+    }
+
+    clearedList.innerHTML = "";
+    if (!batches.length) {
+      var empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "No cleared hisab yet. Use 'Clear Hisab' in Khata Book.";
+      clearedList.appendChild(empty);
+      return;
+    }
+
+    batches.slice().reverse().forEach(function (batch) {
+      var isExpanded = !!state.expandedCleared[batch.id];
+      var matchingEntries = (state.days[batch.date] || []).filter(function (e) {
+        return e.clearedBatchId === batch.id;
+      });
+
+      var card = document.createElement("div");
+      card.className = "party-card" + (isExpanded ? " expanded" : "");
+      card.style.borderColor = "var(--green-cleared-border)";
+
+      var row = document.createElement("div");
+      row.className = "party-summary-row";
+      row.style.background = "var(--green-cleared-bg)";
+
+      var info = document.createElement("div");
+      info.className = "party-info";
+      var titleEl = document.createElement("div");
+      titleEl.className = "party-name";
+      titleEl.style.color = "#86efac";
+      titleEl.textContent = batch.label;
+      var subEl = document.createElement("div");
+      subEl.className = "party-sub";
+      subEl.textContent = formatDisplayDate(batch.date) + " · " + matchingEntries.length + " payment(s) · Read-Only";
+      info.appendChild(titleEl);
+      info.appendChild(subEl);
+      info.style.cursor = "pointer";
+      info.addEventListener("click", function () { payBtn.click(); });
+
+      var actions = document.createElement("div");
+      actions.className = "party-right-actions";
+
+      var payBtn = document.createElement("button");
+      payBtn.type = "button";
+      payBtn.className = "pay-total-btn";
+      payBtn.style.background = "var(--green-cleared)";
+      payBtn.innerHTML = '<span>' + formatINR(batch.total) + '</span><span class="pay-caret">' + (isExpanded ? "▲" : "▼") + '</span>';
+      payBtn.addEventListener("click", function () {
+        state.expandedCleared[batch.id] = !state.expandedCleared[batch.id];
+        renderCleared();
+      });
+
+      actions.appendChild(payBtn);
+      row.appendChild(info);
+      row.appendChild(actions);
+
+      var drawer = document.createElement("div");
+      drawer.className = "entries-drawer";
+
+      var table = document.createElement("table");
+      table.className = "entries-table";
+      table.innerHTML = '<thead><tr><th>#</th><th>Date</th><th>Amount</th><th>Note</th></tr></thead>';
+
+      var tbody = document.createElement("tbody");
+      matchingEntries.forEach(function (e, idx) {
+        var tr = document.createElement("tr");
+        tr.className = "daybook-row-cleared";
+        tr.innerHTML = '<td>' + (idx + 1) + '</td><td>' + formatDisplayDate(batch.date) + '</td><td class="entry-amt" style="color:#86efac;">' + formatINR(e.amount) + '</td><td>' + (e.note || "—") + '</td>';
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      drawer.appendChild(table);
+
+      var unlockRow = document.createElement("div");
+      unlockRow.style.display = "flex";
+      unlockRow.style.justifyContent = "flex-end";
+      var restoreBtn = document.createElement("button");
+      restoreBtn.type = "button";
+      restoreBtn.className = "unlock-pin-btn";
+      restoreBtn.textContent = "PIN Unlock / Restore to Khata";
+      restoreBtn.addEventListener("click", function () {
+        requirePin(function () {
+          matchingEntries.forEach(function (e) {
+            e.cleared = false;
+            delete e.clearedBatchId;
+            delete e.clearedLabel;
+          });
+          state.clearedBatches = state.clearedBatches.filter(function (b) { return b.id !== batch.id; });
+          saveState();
+          renderAll();
+          showToast(batch.label + " restored to Khata");
+        });
+      });
+      unlockRow.appendChild(restoreBtn);
+      drawer.appendChild(unlockRow);
+
+      card.appendChild(row);
+      card.appendChild(drawer);
+      clearedList.appendChild(card);
+    });
+  }
+
   function applyViewState() {
-    var isDaybook = state.activeView === "daybook";
-    daybookView.classList.toggle("active", isDaybook);
-    khataView.classList.toggle("active", !isDaybook);
+    daybookView.classList.toggle("active", state.activeView === "daybook");
+    khataView.classList.toggle("active", state.activeView === "khata");
+    clearedView.classList.toggle("active", state.activeView === "cleared");
 
     document.querySelectorAll("[data-view]").forEach(function (btn) {
       btn.classList.toggle("active", btn.getAttribute("data-view") === state.activeView);
@@ -1700,6 +2103,7 @@
     renderKeypad();
     renderDaybook();
     renderKhata();
+    renderCleared();
   }
 
   document.getElementById("prevDayBtn").addEventListener("click", function () {
@@ -1741,6 +2145,7 @@
   });
 
   khataSearchInput.addEventListener("input", renderKhata);
+  clearedSearchInput.addEventListener("input", renderCleared);
 
   document.getElementById("fullscreenBtn").addEventListener("click", function () {
     try {
@@ -1804,6 +2209,18 @@
     backupModal.classList.remove("open");
   });
 
+  document.getElementById("savePinBtn").addEventListener("click", function () {
+    var np = document.getElementById("newPinInput").value.trim();
+    if (np.length < 4) {
+      showToast("Enter at least 4 digits");
+      return;
+    }
+    state.pin = np;
+    saveState();
+    document.getElementById("newPinInput").value = "";
+    showToast("PIN updated!");
+  });
+
   function downloadFile(filename, content, mime) {
     var blob = new Blob([content], { type: mime });
     var url = URL.createObjectURL(blob);
@@ -1817,19 +2234,24 @@
   }
 
   document.getElementById("exportJsonBtn").addEventListener("click", function () {
-    downloadFile("daybook-backup-" + localTodayStr() + ".json", JSON.stringify(state.days, null, 2), "application/json");
+    downloadFile("daybook-backup-" + localTodayStr() + ".json", JSON.stringify({
+      days: state.days,
+      clearedBatches: state.clearedBatches,
+      pin: state.pin
+    }, null, 2), "application/json");
     showToast("JSON backup downloaded");
   });
 
   document.getElementById("exportCsvBtn").addEventListener("click", function () {
-    var rows = [["Date", "Party", "Amount", "Note"]];
+    var rows = [["Date", "Party", "Amount", "Note", "Status"]];
     Object.keys(state.days).sort().forEach(function (dt) {
       (state.days[dt] || []).forEach(function (e) {
         rows.push([
           formatDisplayDate(dt),
           '"' + String(e.party || "").replace(/"/g, '""') + '"',
           Number(e.amount) || 0,
-          '"' + String(e.note || "").replace(/"/g, '""') + '"'
+          '"' + String(e.note || "").replace(/"/g, '""') + '"',
+          e.cleared ? (e.clearedLabel || "CLEARED") : "ACTIVE"
         ]);
       });
     });
@@ -1846,7 +2268,13 @@
       try {
         var parsed = JSON.parse(e.target.result);
         if (parsed && typeof parsed === "object") {
-          state.days = parsed;
+          if (parsed.days) {
+            state.days = parsed.days;
+            if (Array.isArray(parsed.clearedBatches)) state.clearedBatches = parsed.clearedBatches;
+            if (parsed.pin) state.pin = String(parsed.pin);
+          } else {
+            state.days = parsed;
+          }
           saveState();
           renderAll();
           backupModal.classList.remove("open");
