@@ -1469,7 +1469,7 @@
     var list = ensureDay(state.currentDate);
     var note = state.kpTargetParty === null ? noteInput.value.trim() : "";
     validAmounts.forEach(function (amt) {
-      list.unshift({
+      list.push({
         id: uid(),
         party: party,
         amount: amt,
@@ -1992,7 +1992,7 @@
       return;
     }
 
-    batches.slice().reverse().forEach(function (batch) {
+    batches.forEach(function (batch) {
       var isExpanded = !!state.expandedCleared[batch.id];
       var matchingEntries = (state.days[batch.date] || []).filter(function (e) {
         return e.clearedBatchId === batch.id;
