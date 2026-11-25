@@ -659,6 +659,19 @@
     cursor: pointer;
   }
 
+  .edit-btn {
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid rgba(125, 211, 252, 0.45);
+    background: rgba(125, 211, 252, 0.14);
+    color: var(--bento-cyan);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-right: 4px;
+  }
+
   .rm-btn {
     height: 26px;
     padding: 0 8px;
@@ -1117,6 +1130,25 @@
   </div>
 </div>
 
+<!-- Edit Entry Modal -->
+<div class="modal-backdrop" id="editModal">
+  <div class="modal-box">
+    <h3 class="modal-title" id="editModalTitle">Edit Payment Entry</h3>
+    <div class="modal-body">
+      <label style="font-size:11px;font-weight:700;">Party Name</label>
+      <input type="text" class="field" id="editPartyInput" list="partyDatalist" placeholder="Party name">
+      <label style="font-size:11px;font-weight:700;">Payment Amount (₹)</label>
+      <input type="number" inputmode="decimal" step="any" min="0" class="field" id="editAmtInput" placeholder="₹ Amount">
+      <label style="font-size:11px;font-weight:700;">Note (optional)</label>
+      <input type="text" class="field" id="editNoteInput" placeholder="Note / Ref">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="editCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-green" id="editSaveBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- Confirm Modal -->
 <div class="modal-backdrop" id="confirmModal">
   <div class="modal-box">
@@ -1352,6 +1384,71 @@
       ev.preventDefault();
       document.getElementById("pinUnlockBtn").click();
     }
+  });
+
+  // Edit Entry Modal Logic
+  var editModal = document.getElementById("editModal");
+  var editModalTitle = document.getElementById("editModalTitle");
+  var editPartyInput = document.getElementById("editPartyInput");
+  var editAmtInput = document.getElementById("editAmtInput");
+  var editNoteInput = document.getElementById("editNoteInput");
+  var editTarget = null; // { entry, dateStr }
+
+  function openEditModal(entry, dateStr) {
+    editTarget = { entry: entry, dateStr: dateStr };
+    editModalTitle.textContent = "Edit Entry (" + formatDisplayDate(dateStr) + ")";
+    editPartyInput.value = entry.party || "";
+    editAmtInput.value = entry.amount || 0;
+    editNoteInput.value = entry.note || "";
+    editModal.classList.add("open");
+    setTimeout(function () { editAmtInput.focus(); }, 50);
+  }
+
+  function requestEditEntry(entry, dateStr) {
+    var needsPin = (dateStr !== localTodayStr()) || !!entry.cleared;
+    if (needsPin) {
+      requirePin(function () {
+        openEditModal(entry, dateStr);
+      });
+    } else {
+      openEditModal(entry, dateStr);
+    }
+  }
+
+  document.getElementById("editCancelBtn").addEventListener("click", function () {
+    editModal.classList.remove("open");
+    editTarget = null;
+  });
+
+  document.getElementById("editSaveBtn").addEventListener("click", function () {
+    if (!editTarget) return;
+    var newParty = editPartyInput.value.trim();
+    var newAmt = parseFloat(editAmtInput.value);
+    if (!newParty || isNaN(newAmt) || newAmt <= 0) {
+      showToast("Enter valid party & amount");
+      return;
+    }
+    var entry = editTarget.entry;
+    entry.party = newParty;
+    entry.amount = newAmt;
+    entry.note = editNoteInput.value.trim();
+
+    if (entry.cleared && entry.clearedBatchId) {
+      var batch = state.clearedBatches.find(function (b) { return b.id === entry.clearedBatchId; });
+      if (batch) {
+        var sum = 0;
+        (state.days[editTarget.dateStr] || []).forEach(function (x) {
+          if (x.clearedBatchId === batch.id) sum += Number(x.amount) || 0;
+        });
+        batch.total = sum;
+      }
+    }
+
+    editModal.classList.remove("open");
+    editTarget = null;
+    saveState();
+    renderAll();
+    showToast("Entry updated!");
   });
 
   function updatePartyDatalist() {
@@ -1715,6 +1812,17 @@
 
         var tdAct = document.createElement("td");
         tdAct.style.textAlign = "right";
+        tdAct.style.whiteSpace = "nowrap";
+
+        var editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", function () {
+          requestEditEntry(entry, state.currentDate);
+        });
+        tdAct.appendChild(editBtn);
+
         if (entry.cleared) {
           var lockBtn = document.createElement("button");
           lockBtn.type = "button";
@@ -1915,6 +2023,17 @@
 
           var tdAct = document.createElement("td");
           tdAct.style.textAlign = "right";
+          tdAct.style.whiteSpace = "nowrap";
+
+          var editBtn = document.createElement("button");
+          editBtn.type = "button";
+          editBtn.className = "edit-btn";
+          editBtn.textContent = "Edit";
+          editBtn.addEventListener("click", function () {
+            requestEditEntry(e.ref, e.date);
+          });
+          tdAct.appendChild(editBtn);
+
           var rmBtn = document.createElement("button");
           rmBtn.type = "button";
           rmBtn.className = "rm-btn";
